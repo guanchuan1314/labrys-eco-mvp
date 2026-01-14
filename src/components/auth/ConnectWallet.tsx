@@ -90,14 +90,16 @@ const ConnectWallet: React.FC<ConnectModalProps> = ({
       throw new Error("No accounts found");
     }
     
-    const address = accounts[0];
+    // const address = accounts[0];
     
     // Only proceed with signature if connection succeeded
-    const message = `Sign this message to authenticate with Labrys Eco.\n\nNonce: ${Date.now()}`;
-    const signature = await walletProvider.request({
-      method: 'personal_sign',
-      params: [message, address],
-    });
+    // const message = `Sign this message to authenticate with Labrys Eco.\n\nNonce: ${Date.now()}`;
+    // const signature = await walletProvider.request({
+    //   method: 'personal_sign',
+    //   params: [message, address],
+    // });
+
+    // TODO: Use signature and address to log in the user
   };
   return (
     <>
