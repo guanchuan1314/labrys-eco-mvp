@@ -4,6 +4,7 @@ const config = require('../config');
 const levels = { error: 0, warn: 1, info: 2, debug: 3 };
 // Default to "error" to keep the console quiet unless overridden
 const currentLevel = (process.env.LOG_LEVEL || 'error').toLowerCase();
+const { notifyToTelegram } = require('../utils/notify');
 
 function shouldLog(level) {
   return levels[level] <= levels[currentLevel];
@@ -18,6 +19,7 @@ const logger = {
   error: (message, ...args) => {
     if (shouldLog('error')) {
       console.error(`[ERROR] ${message}`, ...args);
+      notifyToTelegram(message, ...args);
     }
   },
   warn: (message, ...args) => {

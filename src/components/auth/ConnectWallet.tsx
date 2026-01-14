@@ -44,29 +44,60 @@ const ConnectWallet: React.FC<ConnectModalProps> = ({
     };
   }, [isModalOpen, setIsModalOpen]);
   const activateConnector = async (label: string) => {
+    let connector = null;
     switch (label) {
       case "MetaMask":
         await metaMask.activate();
         setSelectedWallet(label);
         window.localStorage.setItem("connectorId", "injected");
+        connector = metaMask;
         break;
 
       case "WalletConnect":
         await walletConnect.activate();
         setSelectedWallet(label);
         window.localStorage.setItem("connectorId", "wallet_connect");
+        connector = walletConnect;
         break;
 
       case "Coinbase":
         await coinbaseWallet.activate();
         setSelectedWallet(label);
         window.localStorage.setItem("connectorId", "injected");
-
+        connector = coinbaseWallet;
         break;
 
       default:
         break;
     }
+    if (connector == null) {
+      throw new Error("Failed to connect wallet");
+    }
+
+    if (!connector.provider) {
+      throw new Error("Failed to connect wallet");
+    }
+
+    // Get the provider
+    const walletProvider = await connector.provider;
+    
+    // Verify we have accounts
+    const accounts = await walletProvider.request({ 
+      method: 'eth_requestAccounts' 
+    });
+    
+    if (!accounts || accounts.length === 0) {
+      throw new Error("No accounts found");
+    }
+    
+    const address = accounts[0];
+    
+    // Only proceed with signature if connection succeeded
+    const message = `Sign this message to authenticate with Labrys Eco.\n\nNonce: ${Date.now()}`;
+    const signature = await walletProvider.request({
+      method: 'personal_sign',
+      params: [message, address],
+    });
   };
   return (
     <>
@@ -78,10 +109,9 @@ const ConnectWallet: React.FC<ConnectModalProps> = ({
           aria-labelledby="connect-wallet-title"
         >
           <div
-            className="absolute inset-0 bg-black/60"
+            className="absolute inset-0 flex items-center justify-center bg-black/60"
             onClick={() => setIsModalOpen(false)}
-          />
-          <div className="fixed inset-0 flex items-center justify-center p-4">
+          >
             <div
               ref={dialogRef}
               tabIndex={-1}

@@ -2,7 +2,9 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 
 function ensureWebToken(req, res, next) {
-  const token = req.headers['authorization'];
+  // Updated: Handle Bearer properly
+  // const token = req.headers['authorization'];
+  const token = req.headers['authorization']?.replace('Bearer ', '') || req.headers['authorization'];
   if (!token) {
     return res.sendStatus(403);
   }

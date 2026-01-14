@@ -18,9 +18,10 @@ const app = express();
 const server = http.createServer(app);
 
 // Initialize Socket.IO
+// Updated: CORS: Only allow specific origin instead of open to all
 const io = require('socket.io')(server, {
   cors: {
-    origin: '*',
+    origin: process.env.FRONTEND_URL || 'http://localhost:2468',
     methods: ['GET', 'POST'],
   },
 });
@@ -32,7 +33,12 @@ dotenv.config({ path: `${config.nodeEnv}.env` });
 app.set('env', config.nodeEnv);
 
 // Middleware
-app.use(cors());
+// Updated: CORS: Only allow specific origin instead of open to all
+// app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:2468',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

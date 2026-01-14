@@ -18,6 +18,7 @@ const v1NotificationRoutes = require('./notifications.routes');
 const v1TicketRoutes = require('./tickets.routes');
 const v1WebhookRoutes = require('./webhooks.routes');
 const v1HealthRoutes = require('./health.routes');
+const v1ErrorRoutes = require('./error.routes');
 
 // Legacy routes (for backward compatibility)
 router.post('/userregister', registerController.userRegister);
@@ -65,6 +66,7 @@ router.use('/v1/plans', v1PlanRoutes);
 router.use('/v1/notifications', v1NotificationRoutes);
 router.use('/v1/tickets', v1TicketRoutes);
 router.use('/v1/webhooks', v1WebhookRoutes);
+router.use('/v1/error', v1ErrorRoutes)
 router.use('/v1', v1HealthRoutes);
 
 // 404 handler for unmatched routes
